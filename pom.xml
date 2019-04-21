@@ -13,7 +13,7 @@
 	<artifactId>multi-datasources-spring-boot</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>multi-datasource</name>
-	<description>Example project of using multiple datasource in a Spring Boot & Spring Data JPA application</description>
+	<description>Example project of using multiple datasource in a Spring Boot and Spring Data JPA application</description>
 
 	<properties>
 		<java.version>1.8</java.version>
