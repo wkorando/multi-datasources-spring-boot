@@ -1,4 +1,4 @@
-package com.developer.ibm.multidatasource.clinic;
+package com.ibm.developer.multidatasource.clinic;
 
 import org.springframework.data.repository.CrudRepository;
 

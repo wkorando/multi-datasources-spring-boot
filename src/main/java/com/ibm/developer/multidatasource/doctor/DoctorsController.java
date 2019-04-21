@@ -1,4 +1,4 @@
-package com.developer.ibm.multidatasource.doctor;
+package com.ibm.developer.multidatasource.doctor;
 
 import java.net.URI;
 

@@ -1,4 +1,4 @@
-package com.developer.ibm.multidatasource.clinic;
+package com.ibm.developer.multidatasource.doctor;
 
 import javax.sql.DataSource;
 
@@ -15,38 +15,36 @@ import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.transaction.PlatformTransactionManager;
 
 @Configuration
-@EnableJpaRepositories(entityManagerFactoryRef = "clinicEntityManagerFactory", //
-		transactionManagerRef = "clinicTransactionManager")
-@ConfigurationProperties(prefix = "clinics-db.datasource")
-public class ClinicsDatasourceConfiguration {
-
+@EnableJpaRepositories(entityManagerFactoryRef = "doctorEntityManagerFactory", //
+		transactionManagerRef = "doctorTransactionManager") //
+@ConfigurationProperties(prefix = "doctors-db.datasource")
+public class DoctorsDatasourceConfiguration {
 	private String url;
 	private String username;
 	private String password;
-	private String database;
 	private boolean generateDdl;
 
-	private DataSource clinicsDatasource() {
+	private DataSource doctorsDatasource() {
 		return DataSourceBuilder.create().url(url).username(username).password(password).build();
 	}
 
 	@Bean
-	PlatformTransactionManager clinicTransactionManager(@Qualifier("clinicEntityManagerFactory")
-			LocalContainerEntityManagerFactoryBean clinicEntityManagerFactory) {
-		return new JpaTransactionManager(clinicEntityManagerFactory.getObject());
+	PlatformTransactionManager doctorTransactionManager(
+			@Qualifier("doctorEntityManagerFactory") LocalContainerEntityManagerFactoryBean doctorEntityManagerFactory) {
+		return new JpaTransactionManager(doctorEntityManagerFactory.getObject());
 	}
 
 	@Bean
-	LocalContainerEntityManagerFactoryBean clinicEntityManagerFactory() {
-
+	LocalContainerEntityManagerFactoryBean doctorEntityManagerFactory() {
 		HibernateJpaVendorAdapter vendorAdapter = new HibernateJpaVendorAdapter();
 		vendorAdapter.setGenerateDdl(generateDdl);
-		vendorAdapter.setDatabase(Database.valueOf(database));
-		
+		vendorAdapter.setShowSql(true);
+
 		LocalContainerEntityManagerFactoryBean factoryBean = new LocalContainerEntityManagerFactoryBean();
-		factoryBean.setDataSource(clinicsDatasource());
+
+		factoryBean.setDataSource(doctorsDatasource());
 		factoryBean.setJpaVendorAdapter(vendorAdapter);
-		factoryBean.setPackagesToScan(Clinic.class.getPackage().getName());
+		factoryBean.setPackagesToScan(Doctor.class.getPackage().getName());
 		return factoryBean;
 	}
 
@@ -60,10 +58,6 @@ public class ClinicsDatasourceConfiguration {
 
 	public void setPassword(String password) {
 		this.password = password;
-	}
-
-	public void setDatabase(String database) {
-		this.database = database;
 	}
 
 	public void setGenerateDdl(boolean generateDdl) {
