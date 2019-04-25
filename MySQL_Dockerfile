@@ -1,0 +1,6 @@
+FROM mysql:8.0.15
+
+ENV MYSQL_ROOT_PASSWORD secret
+ENV MYSQL_DATABASE clinics-db
+
+COPY /init-scripts/init-mysql.sql /docker-entrypoint-initdb.d/

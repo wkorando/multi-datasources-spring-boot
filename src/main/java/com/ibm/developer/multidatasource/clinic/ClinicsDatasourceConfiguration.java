@@ -5,28 +5,26 @@ import javax.sql.DataSource;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.jdbc.DataSourceBuilder;
+import org.springframework.boot.orm.jpa.EntityManagerFactoryBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
-import org.springframework.orm.jpa.vendor.Database;
-import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 @Configuration
-@EnableJpaRepositories(entityManagerFactoryRef = "clinicEntityManagerFactory", //
-		transactionManagerRef = "clinicTransactionManager")
-@ConfigurationProperties(prefix = "clinics-db.datasource")
+@EnableTransactionManagement
+@EnableJpaRepositories(entityManagerFactoryRef = "clinicEntityManagerFactory", transactionManagerRef = "clinicTransactionManager")
 public class ClinicsDatasourceConfiguration {
-
-	private String url;
-	private String username;
-	private String password;
-	private boolean generateDdl;
-
-	private DataSource clinicsDatasource() {
-		return DataSourceBuilder.create().url(url).username(username).password(password).build();
+	
+	@Bean
+	@Primary
+	@ConfigurationProperties(prefix = "clinics.datasource")
+	public DataSource clinicsDataSource() {
+		return DataSourceBuilder.create().build();
 	}
 
 	@Bean
@@ -36,32 +34,8 @@ public class ClinicsDatasourceConfiguration {
 	}
 
 	@Bean
-	LocalContainerEntityManagerFactoryBean clinicEntityManagerFactory() {
-
-		HibernateJpaVendorAdapter vendorAdapter = new HibernateJpaVendorAdapter();
-		vendorAdapter.setGenerateDdl(generateDdl);
-		vendorAdapter.setShowSql(true);
-
-		LocalContainerEntityManagerFactoryBean factoryBean = new LocalContainerEntityManagerFactoryBean();
-		factoryBean.setDataSource(clinicsDatasource());
-		factoryBean.setJpaVendorAdapter(vendorAdapter);
-		factoryBean.setPackagesToScan(Clinic.class.getPackage().getName());
-		return factoryBean;
-	}
-
-	public void setUrl(String url) {
-		this.url = url;
-	}
-
-	public void setUsername(String username) {
-		this.username = username;
-	}
-
-	public void setPassword(String password) {
-		this.password = password;
-	}
-
-	public void setGenerateDdl(boolean generateDdl) {
-		this.generateDdl = generateDdl;
+	LocalContainerEntityManagerFactoryBean clinicEntityManagerFactory(
+			@Qualifier("clinicsDataSource") DataSource clinicsDatasource, EntityManagerFactoryBuilder builder) {
+		return builder.dataSource(clinicsDatasource).packages(Clinic.class).build();
 	}
 }

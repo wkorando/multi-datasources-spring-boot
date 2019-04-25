@@ -5,27 +5,24 @@ import javax.sql.DataSource;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.jdbc.DataSourceBuilder;
+import org.springframework.boot.orm.jpa.EntityManagerFactoryBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
-import org.springframework.orm.jpa.vendor.Database;
-import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 @Configuration
+@EnableTransactionManagement
 @EnableJpaRepositories(entityManagerFactoryRef = "doctorEntityManagerFactory", //
 		transactionManagerRef = "doctorTransactionManager") //
-@ConfigurationProperties(prefix = "doctors-db.datasource")
 public class DoctorsDatasourceConfiguration {
-	private String url;
-	private String username;
-	private String password;
-	private boolean generateDdl;
-
-	private DataSource doctorsDatasource() {
-		return DataSourceBuilder.create().url(url).username(username).password(password).build();
+	@Bean
+	@ConfigurationProperties(prefix = "doctors.datasource")
+	DataSource doctorsDatasource() {
+		return DataSourceBuilder.create().build();
 	}
 
 	@Bean
@@ -35,32 +32,8 @@ public class DoctorsDatasourceConfiguration {
 	}
 
 	@Bean
-	LocalContainerEntityManagerFactoryBean doctorEntityManagerFactory() {
-		HibernateJpaVendorAdapter vendorAdapter = new HibernateJpaVendorAdapter();
-		vendorAdapter.setGenerateDdl(generateDdl);
-		vendorAdapter.setShowSql(true);
-
-		LocalContainerEntityManagerFactoryBean factoryBean = new LocalContainerEntityManagerFactoryBean();
-
-		factoryBean.setDataSource(doctorsDatasource());
-		factoryBean.setJpaVendorAdapter(vendorAdapter);
-		factoryBean.setPackagesToScan(Doctor.class.getPackage().getName());
-		return factoryBean;
-	}
-
-	public void setUrl(String url) {
-		this.url = url;
-	}
-
-	public void setUsername(String username) {
-		this.username = username;
-	}
-
-	public void setPassword(String password) {
-		this.password = password;
-	}
-
-	public void setGenerateDdl(boolean generateDdl) {
-		this.generateDdl = generateDdl;
+	LocalContainerEntityManagerFactoryBean doctorEntityManagerFactory(
+			@Qualifier("doctorsDatasource") DataSource doctorsDatasource, EntityManagerFactoryBuilder builder) {
+		return builder.dataSource(doctorsDatasource).packages(Doctor.class).build();
 	}
 }

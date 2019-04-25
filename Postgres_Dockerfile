@@ -1,0 +1,6 @@
+FROM postgres:11.2-alpine
+
+ENV POSTGRES_PASSWORD secret
+ENV POSTGRES_DB doctors-db
+
+COPY /init-scripts/init-postgres.sql /docker-entrypoint-initdb.d/

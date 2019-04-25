@@ -11,7 +11,7 @@ Docker
 
 The demo uses docker to setup up a Postgres and MySQL database.
 
-The script, `init.sh`, can be used to start up the database containers and Spring Boot application.
+The script, `run.sh`, can be used to start up the database containers and Spring Boot application.
 
 `multi-spring-datasources.postman_collection.json` contains saved Postman requests for testing the application. 
 
