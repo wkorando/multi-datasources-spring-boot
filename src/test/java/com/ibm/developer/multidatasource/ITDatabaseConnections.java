@@ -14,10 +14,10 @@ import com.ibm.developer.multidatasource.doctor.DoctorsRepo;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = { MultiDatasourceApplication.class }, properties = {
-		"clinics.datasource.url=jdbc:h2:mem:clinics-db;INIT=RUNSCRIPT FROM 'classpath:init-mysql.sql'", //
+		"clinics.datasource.jdbc-url=jdbc:h2:mem:clinics-db;INIT=RUNSCRIPT FROM 'classpath:init-mysql.sql'", //
 		"clinics.datasource.username=sa", //
 		"clinics.datasource.password=sa",//
-		"doctors.datasource.url=jdbc:h2:mem:doctors-db;INIT=RUNSCRIPT FROM 'classpath:init-postgres.sql'", //
+		"doctors.datasource.jdbc-url=jdbc:h2:mem:doctors-db;INIT=RUNSCRIPT FROM 'classpath:init-postgres.sql'", //
 		"doctors.datasource.username=sa", //
 		"doctors.datasource.password=sa"
 })
